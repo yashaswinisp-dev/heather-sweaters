@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dec 3rd Virtual Sweater Exchange</title>
+<style>
+@import url('https://googleapis.com');
+body { font-family: 'Quicksand', sans-serif; background: linear-gradient(180deg, #fceee9 0%, #f7d9d0 100%); color: #4a3b32; text-align: center; padding: 20px 15px 50px 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
+.snowflake { position: fixed; top: -10px; color: white; user-select: none; pointer-events: none; animation: fall linear infinite; opacity: 0.85; }
+@keyframes fall { to { transform: translateY(105vh); } }
+.player-box, .card { max-width: 440px; margin: 0 auto 15px auto; background: #fffdfb; border-radius: 22px; box-shadow: 0 8px 20px rgba(168,104,86,0.12); }
+.player-box { padding: 8px; }
+.card { padding: 26px 20px; border: 2px dashed #e2b6a8; position: relative; z-index: 2; }
+h1, h2 { color: #b85d43; margin: 0 0 8px 0; }
+.subtitle { font-size: 14px; color: #7a6358; margin-bottom: 16px; }
+.stage { background: #fdf5f2; border-radius: 16px; padding: 14px; margin-bottom: 14px; border: 1px solid #f0dcd5; }
+label { display: block; text-align: left; width: 92%; margin: 8px auto 3px auto; font-size: 13px; font-weight: 700; color: #6e564b; }
+input, select, textarea { width: 92%; padding: 10px 12px; margin-bottom: 8px; border: 1.5px solid #e3cdc4; border-radius: 12px; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+.row { display: flex; gap: 10px; width: 92%; margin: 0 auto; }
+.row div { flex: 1; }
+.row select { width: 100%; }
+button { background: #c86d51; color: white; border: none; padding: 12px 24px; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; margin-top: 10px; }
+button:hover { background: #b05a40; }
+.link-box { background: #f7ebe6; padding: 14px; border-radius: 14px; word-break: break-all; margin-top: 16px; font-size: 12px; border: 1px solid #e2c5ba; display: none; }
+.gift-tag { background: #fff6f2; border: 1.5px dashed #d49a89; border-radius: 14px; padding: 15px; margin: 15px 0; }
+.footer { margin-top: 20px; font-size: 12px; color: #8c7368; }
+</style>
+</head>
+<body>
+<div class="player-box">
+<iframe width="100%" height="80" src="https://youtube.com" title="Conan Gray - Heather" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:12px;display:block;"></iframe>
+</div>
+
+<div id="maker-screen" class="card">
+<h1>🧶 Dec 3rd Sweater Studio</h1>
+<p class="subtitle">Knit a cozy virtual sweater and send the link to a friend for December 3rd!</p>
+<div class="stage" id="maker-stage"></div>
+<input type="text" id="to-name" placeholder="Friend's Name (To)">
+<input type="text" id="from-name" placeholder="Your Name (From)">
+<div class="row">
+<div>
+<label>Sweater Color</label>
+<select id="color-picker" onchange="updatePreview()">
+<option value="#e07a5f">Warm Terracotta</option>
+<option value="#81b29a">Sage Green</option>
+<option value="#f2cc8f">Butter Cream</option>
+<option value="#8d99ae">Periwinkle Blue</option>
+<option value="#b56576">Dusty Rose</option>
+<option value="#bc4749">Cranberry Red</option>
+<option value="#9c6644">Cozy Mocha</option>
+<option value="#9b89b3">Soft Lavender</option>
+</select>
+</div>
+<div>
+<label>Knit Style</label>
+<select id="pattern-picker" onchange="updatePreview()">
+<option value="solid">Classic Solid</option>
+<option value="stripes">Cozy Stripes</option>
+<option value="nordic">Winter Dots</option>
+<option value="colorblock">Cream Sleeves</option>
+</select>
+</div>
+</div>
+<label>Cute Chest Patch</label>
+<select id="patch-picker" onchange="updatePreview()">
+<option value="❤️">Heart Patch ❤️</option>
+<option value="🎀">Cozy Bow 🎀</option>
+<option value="⭐">Gold Star ⭐</option>
+<option value="🧸">Teddy Bear 🧸</option>
+<option value="☕">Hot Cocoa ☕</option>
+<option value="🦋">Butterfly 🦋</option>
+<option value="❄️">Snowflake ❄️</option>
+<option value="💿">Vinyl Record 💿</option>
+</select>
+<label>Gift Tag Message</label>
+<textarea id="note-text" rows="2" placeholder="Write a warm December 3rd note..."></textarea>
+<button onclick="generateLink()">Create Shareable Link ✨</button>
+<div id="result-box" class="link-box">
+<strong>🎁 Your custom sweater link is ready!</strong>
+<p id="share-url" style="color:#6e564b;margin:8px 0;"></p>
+<button onclick="copyLink()" style="padding:8px 16px;font-size:13px;">Copy Link 📋</button>
+</div>
+</div>
+
+<div id="viewer-screen" class="card" style="display:none;">
+<h2 id="view-title">A Dec 3rd Sweater For You! 🧥</h2>
+<p class="subtitle">Someone knitted a virtual sweater just for you today.</p>
+<div class="stage" id="viewer-stage"></div>
+<div class="gift-tag">
+<p id="view-note" style="font-style:italic;font-size:16px;margin:0 0 8px 0;"></p>
+<strong id="view-from" style="color:#b85d43;"></strong>
+</div>
+<button onclick="window.location.href=window.location.pathname">Knit One Back 🧶</button>
+</div>
+
+<div class="footer">Made with 🧶 for December 3rd</div>
+
+<script>
+function buildSweaterSVG(idPrefix, size) {
+return '<svg width="' + size + '" height="' + (size - 20) + '" viewBox="0 0 120 105">' +
+'<path d="M56,10 C56,4 64,4 64,10 C64,13 60,14 60,17" fill="none" stroke="#b59b8d" stroke-width="2.5" stroke-linecap="round"/>' +
+'<path d="M35,23 L60,16 L85,23" fill="none" stroke="#b59b8d" stroke-width="2.5" stroke-linecap="round"/>' +
+'<path id="' + idPrefix + '-sleeves" d="M35,22 L12,55 L25,63 L38,40 L82,40 L95,63 L108,55 L85,22 Z" fill="#e07a5f"/>' +
+'<path id="' + idPrefix + '-body" d="M35,22 L50,22 Q60,31 70,22 L85,22 L85,92 L35,92 Z" fill="#e07a5f"/>' +
+'<path d="M49,22 Q60,32 71,22" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="3" stroke-linecap="round"/>' +
+'<line x1="36" y1="88" x2="84" y2="88" stroke="rgba(255,255,255,0.45)" stroke-width="3" stroke-dasharray="3,2"/>' +
+'<g id="' + idPrefix + '-stripes" style="display:none;"><rect x="35" y="42" width="50" height="6" fill="rgba(255,255,255,0.45)"/><rect x="35" y="56" width="50" height="6" fill="rgba(255,255,255,0.45)"/><rect x="35" y="70" width="50" height="6" fill="rgba(255,255,255,0.45)"/></g>' +
+'<g id="' + idPrefix + '-nordic" style="display:none;" fill="rgba(255,255,255,0.65)"><circle cx="45" cy="40" r="2.2"/><circle cx="60" cy="40" r="2.2"/><circle cx="75" cy="40" r="2.2"/><circle cx="52" cy="47" r="2.2"/><circle cx="68" cy="47" r="2.2"/><circle cx="45" cy="76" r="2.2"/><circle cx="60" cy="76" r="2.2"/><circle cx="75" cy="76" r="2.2"/></g>' +
+'<text id="' + idPrefix + '-patch" x="60" y="64" font-size="20" text-anchor="middle">❤️</text></svg>';
+}
+
+document.getElementById('maker-stage').innerHTML = buildSweaterSVG('sweater', 170);
+document.getElementById('viewer-stage').innerHTML = buildSweaterSVG('view', 180);
+
+for (let i = 0; i < 16; i++) {
+let f = document.createElement('div');
+f.className = 'snowflake';
+f.textContent = '❄';
+f.style.left = Math.random() * 100 + 'vw';
+f.style.animationDuration = (Math.random() * 6 + 6) + 's';
+f.style.animationDelay = (Math.random() * 5) + 's';
+f.style.fontSize = (Math.random() * 8 + 10) + 'px';
+document.body.appendChild(f);
+}
+
+function applyStyle(prefix, color, pattern, patch) {
+document.getElementById(prefix + '-body').setAttribute('fill', color);
+document.getElementById(prefix + '-sleeves').setAttribute('fill', pattern === 'colorblock' ? '#f5ebe0' : color);
+document.getElementById(prefix + '-stripes').style.display = pattern === 'stripes' ? 'block' : 'none';
+document.getElementById(prefix + '-nordic').style.display = pattern === 'nordic' ? 'block' : 'none';
+document.getElementById(prefix + '-patch').textContent = patch;
+}
+
+function updatePreview() {
+applyStyle('sweater', document.getElementById('color-picker').value, document.getElementById('pattern-picker').value, document.getElementById('patch-picker').value);
+}
+
+function generateLink() {
+const params = new URLSearchParams({
+to: document.getElementById('to-name').value.trim() || 'You',
+from: document.getElementById('from-name').value.trim() || 'A Friend',
+c: document.getElementById('color-picker').value,
+k: document.getElementById('pattern-picker').value,
+p: document.getElementById('patch-picker').value,
+n: document.getElementById('note-text').value.trim() || 'Happy December 3rd! Stay warm and cozy.'
+});
+const baseUrl = window.location.href.split('?')[0];
+document.getElementById('share-url').textContent = baseUrl + '?' + params.toString();
+document.getElementById('result-box').style.display = 'block';
+}
+
+function copyLink() {
+navigator.clipboard.writeText(document.getElementById('share-url').textContent);
+alert('Sweater link copied! Send it to your friend 🧶');
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('to')) {
+document.getElementById('maker-screen').style.display = 'none';
+document.getElementById('viewer-screen').style.display = 'block';
+document.getElementById('view-title').textContent = 'A Dec 3rd Sweater for ' + urlParams.get('to') + ' 🧥';
+applyStyle('view', urlParams.get('c') || '#e07a5f', urlParams.get('k') || 'solid', urlParams.get('p') || '❤️');
+document.getElementById('view-note').textContent = '"' + (urlParams.get('n') || 'Happy December 3rd!') + '"';
+document.getElementById('view-from').textContent = '— From ' + (urlParams.get('from') || 'A Friend');
+}
+</script>
+</body>
+</html>
